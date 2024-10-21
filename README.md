@@ -1,7 +1,8 @@
 # LinuxOS_Lab1_my_get_physical_address
 
-Kernel Original README
----
+Kernel function code is written in folder `getPA`
+
+
 Linux kernel
 ============
 
