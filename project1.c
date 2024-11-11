@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <unistd.h>
+#include <stdint.h>
                 
 
 void *my_get_physical_addresses(void *vaddr)
@@ -20,10 +21,10 @@ void hello(void)
 int main()
   { 
     int      loc_a;
-    void     *parent_use, *child_use;  
+    uint64_t     *parent_use, *child_use;  
 
     printf("===========================Before Fork==================================\n");             
-    parent_use=my_get_physical_addresses(&global_a);
+    parent_use=(uint64_t)my_get_physical_addresses(&global_a);
     printf("pid=%d: global variable global_a:\n", getpid());  
    printf("Offest of logical address:[%p]   Physical address:[%p]\n", &global_a,parent_use);              
     printf("========================================================================\n");  
@@ -32,7 +33,7 @@ int main()
     if(fork())
     { /*parent code*/
       printf("vvvvvvvvvvvvvvvvvvvvvvvvvv  After Fork by parent  vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv\n"); 
-      parent_use=my_get_physical_addresses(&global_a);
+      parent_use=(uint64_t)my_get_physical_addresses(&global_a);
       printf("pid=%d: global variable global_a:\n", getpid()); 
       printf("******* Offset of logical address:[%p]   Physical address:[%p]\n", &global_a,parent_use); 
       printf("vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv\n");                      
@@ -42,7 +43,7 @@ int main()
     { /*child code*/
 
     printf("llllllllllllllllllllllllll  After Fork by child  llllllllllllllllllllllllllllllll\n"); 
-    child_use=my_get_physical_addresses(&global_a);
+    child_use=(uint64_t)my_get_physical_addresses(&global_a);
     printf("******* pid=%d: global variable global_a:\n", getpid());  
     printf("******* Offset of logical address:[%p]   Physical address:[%p]\n", &global_a, child_use); 
     printf("llllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll\n");  
@@ -51,7 +52,7 @@ int main()
     /*----------------------- trigger CoW (Copy on Write) -----------------------------------*/    
     global_a=789;
     printf("iiiiiiiiiiiiiiiiiiiiiiiiii  Test copy on write in child  iiiiiiiiiiiiiiiiiiiiiiii\n"); 
-    child_use=my_get_physical_addresses(&global_a);
+    child_use=(uint64_t)my_get_physical_addresses(&global_a);
     printf("******* pid=%d: global variable global_a:\n", getpid());  
     printf("******* Offset of logical address:[%p]   Physical address:[%p]\n", &global_a, child_use); 
     printf("iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii\n");  
